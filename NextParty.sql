@@ -72,3 +72,16 @@ Alter table user_party add constraint `party_user` foreign key (`party_id`) refe
 Alter table user_party add constraint `user_party` foreign key (`user_id`) references `users` (`id`);
 -- Alter table user_party add constraint `user_role` foreign key (`role_id`) references  `roles` (`id`);
 Alter table wishlists add constraint `wishlist_party` foreign key (`party_id`) references `parties` (`id`);
+
+
+---
+CREATE DEFINER=`admin1`@`%` TRIGGER `nextparty`.`user_party_BEFORE_INSERT` BEFORE INSERT ON `user_party` FOR EACH ROW
+BEGIN
+	declare c int;
+    select count(party_id) into c from user_party
+    where (party_id = new.party_id);
+
+    if c>=1 then
+		set new.role_id = 2;
+	end if;
+END
